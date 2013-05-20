@@ -2,6 +2,7 @@ include <bearing_dims.scad>;
 
 base_t = 4;
 
+screw_3mm = 3.05;
 nut_3mm = 5.25;
 
 clearance = 0.7;

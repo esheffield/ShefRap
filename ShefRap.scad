@@ -1,10 +1,11 @@
+use <ShefRap_common.scad>;
 use <TSlot_v1.0.scad>;
 use <shaft_collar_support.scad>;
 use <shaft_tee_support.scad>;
 use <linear_bearing_block.scad>;
 use <angle.scad>;
 use <motors.scad>;
-use <x_carriage_assembly.scad>;
+use <x_carriage_assembly_v2.scad>;
 use <pulley.scad>;
 use <platform.scad>;
 
@@ -50,9 +51,9 @@ module shef_rap()
 		rotate([0,90,0])
 			cylinder(r=5, h=depth-40);
 
-	translate([130,rod_offset,height - 10])
+	translate([430,rod_offset,height - 10])
 		rotate([0,0,90])
-			x_carriage_assembly(10,10,y_rs);
+			x_carriage_assembly(y_rs);
 }
 
 module front(width, height, y_rs)
