@@ -1,5 +1,6 @@
 module pulley(bore)
 {
+	color([0.7,0.7,0.7])
 	difference()
 	{
 		union()

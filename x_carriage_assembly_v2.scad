@@ -26,18 +26,22 @@ module x_carriage_assembly(y_separation)
 
 	mnt_len = 50;
 
-	translate([0, 0, -(clamp_ht * 2 + thickness + y_axis_bearing_mid_hgt)])
+	translate([0, 0, (clamp_ht * 2 + thickness + y_axis_bearing_mid_hgt)])
+	rotate([180,0,0])
 	union()
 	{
 		translate([-x_end_width / 2, 0, 0])
 		{
-			translate([-6, 0, clamp_ht * 2])
-				cube([x_end_width + 6, x_end_length, thickness]);
-
-//			translate([-6, x_end_length, clamp_ht * 2])
-//				nema_17_plate(slot_len=slot_len, margin=margin, thickness=thickness);
-
-
+			translate([-20, 0, clamp_ht * 2])
+			{
+				cube([x_end_width + 20, x_end_length, thickness]);
+				translate([10,23,-1])
+					rotate([180,0,0])
+						pulley(5);
+				translate([10,68,-1])
+					rotate([180,0,0])
+						pulley(5);
+			}
 			translate([y_axis_bearing_wid / 2,
 						(x_end_length - y_axis_bearing_len) / 2,
 						y_axis_bearing_mid_hgt + thickness + clamp_ht * 2])
@@ -67,8 +71,15 @@ module x_carriage_assembly(y_separation)
 		translate([rod_len - ((3 / 2) * x_end_width), 0, 0])
 		{
 			translate([0, 0, clamp_ht * 2])
-				cube([x_end_width, x_end_length, thickness]);
-
+			{
+				cube([x_end_width + 20, x_end_length, thickness]);
+				translate([x_end_width + 10,23,-1])
+					rotate([180,0,0])
+						pulley(5);
+				translate([x_end_width + 10,68,-1])
+					rotate([180,0,0])
+						pulley(5);
+			}
 			translate([y_axis_bearing_wid / 2,
 						(x_end_length - y_axis_bearing_len) / 2,
 						y_axis_bearing_mid_hgt + thickness + clamp_ht * 2])
