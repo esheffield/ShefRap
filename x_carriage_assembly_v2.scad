@@ -1,6 +1,6 @@
 include <ShefRap_common.scad>;
 include <bearing_dims.scad>;
-use <extruder_carriage.scad>;
+use <extruder_carriage_v2.scad>;
 use <motors.scad>;
 use <pulley.scad>;
 use <rod_clamp.scad>;
@@ -8,167 +8,115 @@ use <linear_bearing_block.scad>;
 
 module x_carriage_assembly(y_separation)
 {
-	slot_len = 0;
-	margin = 2;
+	clamp_ht = x_axis_rod / 2 + base_t;
+	x_end_width =  y_axis_bearing_wid;
+	x_rod_offset = base_t + nut_3mm + x_axis_rod / 2;
+	rod_len = y_separation + y_axis_bearing_wid;
+	thickness = y_axis_carriage_thickness;
 
+	translate([0, 0, (clamp_ht * 2 + thickness + y_axis_bearing_mid_hgt)])
+	rotate([180,0,0])
+	union()
+	{
+		y_carriage_end(y_separation);
+
+		translate([rod_len - y_axis_bearing_wid, 0, 0])
+		{
+			mirror([1,0,0])
+			y_carriage_end(y_separation);
+		}
+
+
+		color(rod_color)
+		{
+			translate([-((y_axis_bearing_wid / 2)), 
+					x_rod_offset, 
+					base_t + x_axis_rod / 2])
+				rotate([0,90,0])
+					cylinder(r = x_axis_rod / 2, h = rod_len);
+			translate([-((y_axis_bearing_wid / 2)), 
+					x_rod_offset + x_axis_rod_separation, 
+					base_t + x_axis_rod / 2])
+				rotate([0,90,0])
+					cylinder(r = x_axis_rod / 2, h = rod_len);
+		}
+
+		translate([(y_separation - ex_carriage_len) / 2, 
+					x_rod_offset + x_axis_rod_separation, 
+					base_t + x_axis_rod / 2])
+			rotate([180,0,0])
+			extruder_carriage(show_bearing=true);
+
+	}
+}
+
+module y_carriage_end(y_separation)
+{
 	x_bearing = x_axis_rod;
 	y_bearing = y_axis_rod;
 
-	x_end_top_length = (2 * (base_t + nut_3mm) + x_axis_rod);
 	x_end_width =  y_axis_bearing_wid;
-	x_end_length = y_axis_bearing_len + (2 * x_end_top_length);
+	x_end_length = y_axis_carriage_wid;
 
 	clamp_ht = x_axis_rod / 2 + base_t;
 	clamp_wid = x_axis_rod + (2 * (base_t + nut_3mm));
 	thickness = 6;
 	rod_len = y_separation + y_axis_bearing_wid;
 	x_rod_offset = base_t + nut_3mm + x_axis_rod / 2;
+	hole_offset = (x_end_length - y_axis_bearing_hole_len) / 2;
 
-	mnt_len = 50;
-
-	translate([0, 0, (clamp_ht * 2 + thickness + y_axis_bearing_mid_hgt)])
-	rotate([180,0,0])
-	union()
+	translate([-x_end_width / 2, 0, 0])
 	{
-		translate([-x_end_width / 2, 0, 0])
+		translate([-20, 0, clamp_ht * 2])
 		{
-			translate([-20, 0, clamp_ht * 2])
+			difference()
 			{
-				cube([x_end_width + 20, x_end_length, thickness]);
-				translate([10,23,-1])
-					rotate([180,0,0])
-						pulley(5);
-				translate([10,68,-1])
-					rotate([180,0,0])
-						pulley(5);
+				color(pla_color)
+					cube([x_end_width + 20, x_end_length, thickness]);
+				translate([20,0,thickness])
+					rotate([180,0,90])
+						rod_clamp_holes(x_axis_rod, x_end_width, y_axis_bearing_hole_wid);
+				translate([20,x_end_length - clamp_wid,thickness])
+					rotate([180,0,90])
+						rod_clamp_holes(x_axis_rod, x_end_width, y_axis_bearing_hole_wid);
 			}
-			translate([y_axis_bearing_wid / 2,
-						(x_end_length - y_axis_bearing_len) / 2,
-						y_axis_bearing_mid_hgt + thickness + clamp_ht * 2])
-				rotate([0,180,0])
-					color([0.6,0.6,0.6]) 
-						linear_bearing_block(y_axis_rod);
+			translate([10,(x_end_length / 2) - hole_offset,-1])
+				rotate([180,0,0])
+					pulley(5);
+			translate([10,(x_end_length / 2) + hole_offset,-1])
+				rotate([180,0,0])
+					pulley(5);
+		}
 
+		translate([y_axis_bearing_wid / 2,
+					(x_end_length - y_axis_bearing_len) / 2,
+					y_axis_bearing_mid_hgt + thickness + clamp_ht * 2])
+			rotate([0,180,0])
+				color([0.6,0.6,0.6]) 
+					linear_bearing_long_block(y_axis_rod);
+
+		color(pla_color)
+		{
 			translate([0, 0, clamp_ht])
 			{
 				rotate([180,0,90])
-					rod_clamp(x_axis_rod, x_end_width);
+					rod_clamp(x_axis_rod, x_end_width, y_axis_bearing_hole_wid);
 				translate([x_end_width, 0, 0])
 					rotate([0,0,90])
-						rod_clamp(x_axis_rod, x_end_width);
+						rod_clamp(x_axis_rod, x_end_width, y_axis_bearing_hole_wid);
 			}
 
 			translate([0, x_end_length - clamp_wid, clamp_ht])
 			{
 				rotate([180,0,90])
-					rod_clamp(x_axis_rod, x_end_width);
+					rod_clamp(x_axis_rod, x_end_width, y_axis_bearing_hole_wid);
 				translate([x_end_width, 0, 0])
 					rotate([0,0,90])
-						rod_clamp(x_axis_rod, x_end_width);
+						rod_clamp(x_axis_rod, x_end_width, y_axis_bearing_hole_wid);
 			}
-		}
-
-		translate([rod_len - ((3 / 2) * x_end_width), 0, 0])
-		{
-			translate([0, 0, clamp_ht * 2])
-			{
-				cube([x_end_width + 20, x_end_length, thickness]);
-				translate([x_end_width + 10,23,-1])
-					rotate([180,0,0])
-						pulley(5);
-				translate([x_end_width + 10,68,-1])
-					rotate([180,0,0])
-						pulley(5);
-			}
-			translate([y_axis_bearing_wid / 2,
-						(x_end_length - y_axis_bearing_len) / 2,
-						y_axis_bearing_mid_hgt + thickness + clamp_ht * 2])
-				rotate([0,180,0])
-					color([0.6,0.6,0.6]) 
-						linear_bearing_block(y_axis_rod);
-
-			translate([0, 0, clamp_ht])
-			{
-				rotate([180,0,90])
-					rod_clamp(x_axis_rod, x_end_width);
-				translate([x_end_width, 0, 0])
-					rotate([0,0,90])
-						rod_clamp(x_axis_rod, x_end_width);
-			}
-
-			translate([0, x_end_length - clamp_wid, clamp_ht])
-			{
-				rotate([180,0,90])
-					rod_clamp(x_axis_rod, x_end_width);
-				translate([x_end_width, 0, 0])
-					rotate([0,0,90])
-						rod_clamp(x_axis_rod, x_end_width);
-			}
-		}
-
-
-		color([0.8,0.8,0.8])
-		{
-			translate([-((x_end_width / 2)), 
-					x_rod_offset, 
-					base_t + x_axis_rod / 2])
-				rotate([0,90,0])
-					cylinder(r = x_bearing / 2, h = rod_len);
-			translate([-((x_end_width / 2)), 
-					x_rod_offset + x_axis_rod_separation, 
-					base_t + x_axis_rod / 2])
-				rotate([0,90,0])
-					cylinder(r = x_bearing / 2, h = rod_len);
-		}
-
-/*
-		translate([x_end_width / 2 + 10, 
-					x_rod_offset, 
-					(y_b_dia / 2) + base_t + (x_bearing / 2)])
-			extruder_carriage(10, show_bearing=true);
-*/
-	}
-}
-
-module x_motor_mount(x_end_width, mnt_len = 40, thickness = 3, show_motor = false)
-{
-	offset = 17;
-	slot_len = 5;
-	margin = 2;
-	motor_h = get_nema_17_size() + (margin * 2);
-	motor = get_nema_17_size() + slot_len + (margin * 2);
-
-	union()
-	{
-		cube([x_end_width, mnt_len, thickness]);
-		translate([-thickness, 0, -(offset - thickness)])
-			cube([thickness, mnt_len + thickness, motor_h]);
-		translate([-(thickness + motor), 0, -offset])
-			cube([motor + thickness, mnt_len + thickness, thickness]);
-		translate([-(motor + thickness), (mnt_len + thickness), -(offset - thickness)])
-			rotate([90,0,0])
-				nema_17_plate(slot_len=slot_len, margin=margin);
-
-		translate([0, mnt_len + thickness, 0])
-			rotate([90,0,0])
-				linear_extrude(height = thickness)
-					polygon(points=[[0,-offset],[x_end_width,0],
-							[x_end_width,thickness],
-							[0, motor_h - offset + thickness],
-							[0, -offset]]);
-		if (show_motor)
-		{
-			translate([-(thickness + margin + slot_len / 2), mnt_len, -(offset - thickness - margin)])
-				rotate([0, 0, 180])
-				{
-					nema_17(40);
-					translate([21,-4,21])
-					rotate([90,0,0])
-						pulley(5);
-				}
 		}
 	}
 }
 
-x_carriage_assembly(300, $fn=80);
+x_carriage_assembly(350, $fn=80);
 //x_motor_mount(45.2);

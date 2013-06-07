@@ -1,3 +1,4 @@
+include <ShefRap_common.scad>;
 use <angle.scad>;
 use <linear_bearing_block.scad>;
 use <leadscrew.scad>;
@@ -12,9 +13,12 @@ module platform(depth, width, z_bearing, z_sep)
 	rotate([90,0,0])
 	union()
 	{
-		linear_bearing_block(12);
-		translate([z_sep,0,0])
+		color(bracket_color)
+		{
 			linear_bearing_block(12);
+			translate([z_sep,0,0])
+				linear_bearing_block(12);
+		}
 		translate([width - (width - z_sep) / 2,z_bb_l,z_bb_ht])
 			rotate([0,0,180])
 				bed(depth, width);
@@ -68,7 +72,8 @@ module drive_bracket()
 
 		translate([50 / 2, fl_ht + 2.01, 50 / 2])
 			rotate([90,0,0])
-				anti_backlash_nut();
+				color(bracket_color)
+					anti_backlash_nut();
 	}
 }
 

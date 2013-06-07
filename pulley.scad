@@ -1,6 +1,8 @@
+include <ShefRap_common.scad>;
+
 module pulley(bore)
 {
-	color([0.7,0.7,0.7])
+	color(pulley_color)
 	difference()
 	{
 		union()

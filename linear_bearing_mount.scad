@@ -5,8 +5,9 @@ use <linear_bearing.scad>;
 module bearing_mount(bearing, show_bearing=false)
 {
 	dims = get_dims_for_shaft_size(bearing, linear_bearing_dims);
-	b_dia = dims[1] + clearance;		// Outer diameter of 10mm linear bearing
-	b_len = dims[2] + clearance;		// Bearing length
+	echo(dims);
+	b_dia = dims[1] + clearance;
+	b_len = dims[2] + clearance;
 
 	bb_dims = get_bb_dims(b_dia, b_len);
 	bb_w = bb_dims[0];		// Individual bearing block width
@@ -22,11 +23,21 @@ module bearing_mount(bearing, show_bearing=false)
 
 	len = bb_len;
 
-	b_lip = 2.6;
+	b_lip = bb_lip_t;
+
+	echo(11111);
+	echo(b_dia);
+	echo(b_len);
+	echo(w);
+	echo(d);
+	echo(g);
+	echo(h);
+	echo(len);
+	echo(11111);
 
 	difference()
 	{
-		union()
+		color(pla_color) union()
 		{
 			cube([w,d,h]);
 			translate([w + g, 0, 0])
@@ -55,3 +66,5 @@ module bearing(bearing)
 		rotate([0,90,0])
 			linear_bearing(bearing);
 }
+
+bearing_mount(10, false);
